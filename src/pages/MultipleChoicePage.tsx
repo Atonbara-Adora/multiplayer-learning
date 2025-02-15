@@ -1,13 +1,8 @@
-import PlusIcon from "../buttons/PlusIcon";
+import { useFlashCardStore } from "../stores/FlashcardStore";
 import { useState } from "react";
 
-type CardType = {
-  text: string;
-  answers: string[];
-  correctAnswer: string;
-};
-
 function MultipleChoice() {
+  const { classDeckName } = useFlashCardStore();
   const [questions, setQuestions] = useState<string[]>([
     "Option 1",
     "Option 2",
@@ -40,7 +35,7 @@ function MultipleChoice() {
         </ul>
       </div>
 
-      <h1 className="text-4xl font-bold text-center text-gray-800 underline decoration-purple-500 mb-4">Deck Name</h1>
+      <h1 className="text-4xl font-bold text-center text-gray-800 underline decoration-purple-500 mb-4">{classDeckName}</h1>
 
       <input
         type="text"
@@ -63,23 +58,23 @@ function MultipleChoice() {
 }
 
 function MultipleChoiceOption({
-    option,
-    onChange,
-  }: {
-    option: string;
-    onChange: (newOption: string) => void;
-  }) {
-    return (
-      <div className="relative w-48">
-        <input
-          type="text"
-          value={option}
-          onChange={(e) => onChange(e.target.value)}
-          className="input input-bordered w-full"
-        />
-      </div>
-    );
-  }
-  
+  option,
+  onChange,
+}: {
+  option: string;
+  onChange: (newOption: string) => void;
+}) {
+  return (
+    <div className="relative w-48">
+      <input
+        type="text"
+        value={option}
+        onChange={(e) => onChange(e.target.value)}
+        className="input input-bordered w-full"
+      />
+    </div>
+  );
+}
+
 
 export default MultipleChoice;

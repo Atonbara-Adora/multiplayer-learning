@@ -1,10 +1,12 @@
-import { create } from 'zustand'
+import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
 
 type CardType = {
     text: string;
     answers: string[];
     correctAnswer: string;
 };
+
 
 interface FlashCardStore {
     classDeckName: string;
@@ -13,15 +15,26 @@ interface FlashCardStore {
     createQuestion: () => void;
 }
 
-export const useFlashCardStore = create<FlashCardStore>((set) => ({
-    classDeckName: "",
-    questions: [],
-    setDeckName: (deckName: string) => set({ classDeckName: deckName }),
-    createQuestion: () => set((state) => ({
-        questions: [...state.questions, {
-            text: "Question",
-            answers: ["Answer 1", "Answer 2", "Answer 3", "Answer 4"],
-            correctAnswer: "Answer 1"
-        }]
-    }))
-}))
+export const useFlashCardStore = create<FlashCardStore>()(
+    persist(
+        (set) => ({
+            classDeckName: "",
+            questions: [],
+            setDeckName: (deckName: string) => set({ classDeckName: deckName }),
+            createQuestion: () =>
+                set((state) => ({
+                    questions: [
+                        ...state.questions,
+                        {
+                            text: "Question",
+                            answers: ["Answer 1", "Answer 2", "Answer 3", "Answer 4"],
+                            correctAnswer: "Answer 1",
+                        },
+                    ],
+                })),
+        }),
+        {
+            name: 'flashcard-store',
+        }
+    )
+);

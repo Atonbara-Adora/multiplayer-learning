@@ -30,7 +30,9 @@ function QuestionList() {
 function Question({ text }: { text: string }) {
   return (
     <div className="flex flex-col items-start py-2 rounded w-96">
-      <button className="btn btn-block mb-2">{text}</button>
+      <a className="btn btn-block mb-2" href="/multiple-choice">
+        {text}
+      </a>
     </div>
   );
 }

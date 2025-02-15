@@ -2,7 +2,7 @@ function LiveMultipleChoiceDisplay() {
   const handleClick = (option: string) => {
     console.log(`You clicked on ${option}`);
     (document.getElementById("modal2") as HTMLDialogElement)?.showModal();
-    
+
   };
 
   return (

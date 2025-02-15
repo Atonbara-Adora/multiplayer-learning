@@ -22,7 +22,6 @@ const MyDecksPage = () => {
                 <a href="/question-list" className="btn">
                     New Deck
                 </a>
-
             </div>
         </div>
     );
