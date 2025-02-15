@@ -1,17 +1,43 @@
 import { useFlashCardStore } from "../stores/FlashcardStore";
+import { useNavigate } from "react-router-dom";
 import PlusIcon from "../buttons/PlusIcon";
 import EditDeckClassModal from "../components/modal/EditDeckClassModal";
+import { useDeckStore } from "../stores/DeckStore";
 
 function QuestionList() {
+  const navigate = useNavigate();
   const { classDeckName, questions, createQuestion } = useFlashCardStore();
+  const { addDeck } = useDeckStore();
+
+  const navigateBack = () => {
+    navigate("/flashcards");
+  }
+
+  const handleSave = () => {
+    addDeck({ classDeckName, questions });
+  }
 
   return (
     <div className="flex flex-col justify-center items-center py-10">
-      <div className="flex text-4xl font-bold text-center text-gray-800">
-        <button className="underline decoration-purple-500 mb-4 mr-2" onClick={() => (document.getElementById('edit_deck_class_modal') as HTMLDialogElement)?.showModal()}>
-          {classDeckName.length === 0 ? "Class Name" : classDeckName}
+      <div className="w-full max-w-4xl flex items-center justify-between px-4">
+        <button onClick={navigateBack} className="text-2xl text-gray-800 hover:text-gray-600 hover:bg-gray-200">
+          ←
         </button>
-        <span>Questions</span>
+
+        <div className="flex flex-col items-center">
+          <button
+            className="underline decoration-purple-500 text-4xl font-bold text-gray-800"
+            onClick={() =>
+              (document.getElementById('edit_deck_class_modal') as HTMLDialogElement)?.showModal()
+            }
+          >
+            {classDeckName.length === 0 ? "Deck Name" : classDeckName}
+          </button>
+        </div>
+
+        <button onClick={handleSave} className="btn btn-success">
+          Save
+        </button>
       </div>
 
       <div className="mt-3 space-y-3">

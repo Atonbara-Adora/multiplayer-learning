@@ -1,6 +1,10 @@
 import { MyDeckCard } from "../components/myDecks";
+import { useDeckStore } from "../stores/DeckStore";
+import { useFlashCardStore } from "../stores/FlashcardStore";
 
 const MyDecksPage = () => {
+    const { clearStore } = useFlashCardStore();
+    const { deck } = useDeckStore();
     return (
         <div className="flex flex-col py-4">
             <h1 className="text-3xl text-center">My Decks</h1>
@@ -8,18 +12,15 @@ const MyDecksPage = () => {
             <main>
                 <div className="overflow-x-auto px-4">
                     <div className="inline-flex space-x-8 py-4">
-                        <MyDeckCard title="Deck 1" />
-                        <MyDeckCard title="Deck 2" />
-                        <MyDeckCard title="Deck 3" />
-                        <MyDeckCard title="Deck 4" />
-                        <MyDeckCard title="Deck 5" />
-                        <MyDeckCard title="Deck 6" />
+                        {deck.map((d, index) => (
+                            <MyDeckCard key={index} title={d.classDeckName} />
+                        ))}
                     </div>
                 </div>
             </main>
 
             <div className="flex justify-center items-center">
-                <a href="/question-list" className="btn">
+                <a href="/question-list" className="btn" onClick={clearStore}>
                     New Deck
                 </a>
             </div>

@@ -10,7 +10,7 @@ const EditDeckClassModal = () => {
     return (
         <dialog id="edit_deck_class_modal" className="modal">
             <div className="modal-box">
-                <h3 className="font-bold text-lg">Class Name: </h3>
+                <h3 className="font-bold text-lg">Deck Name: </h3>
                 <input type="text" placeholder="Type here" className="input input-bordered w-full mt-4"
                     value={classDeckName}
                     onChange={(e) => setDeckName(e.target.value)}

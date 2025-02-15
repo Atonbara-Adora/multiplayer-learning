@@ -16,6 +16,7 @@ export interface FlashCardStore {
     currentQuestionIndex: number;
     setCurrentQuestionIndex: (index: number) => void;
     updateQuestion: (index: number, card: CardType) => void;
+    clearStore: () => void;
 }
 
 const flashCardSlice: StateCreator<FlashCardStore> = (set) => ({
@@ -41,6 +42,7 @@ const flashCardSlice: StateCreator<FlashCardStore> = (set) => ({
             return state;
         });
     },
+    clearStore: () => set({ classDeckName: "", questions: [] }),
 });
 
 export const useFlashCardStore = create<FlashCardStore>()(
