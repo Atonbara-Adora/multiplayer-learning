@@ -1,7 +1,7 @@
 function App() {
 
   return (
-    <h1> HELLo</h1>
+    <h1 className="underline font-black text-sm"> HELLo</h1>
   )
 }
 
