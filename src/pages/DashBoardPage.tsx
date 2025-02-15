@@ -1,4 +1,4 @@
-import DashboardHeader from "../components/dashbaord/DashBoardHeader";
+import { DashboardHeader, DashBoardRecentCards } from "../components/dashboard";
 
 const DashBoard = () => {
     return (
@@ -6,6 +6,11 @@ const DashBoard = () => {
             <header>
                 <DashboardHeader />
             </header>
+
+            <main>
+                <DashBoardRecentCards />
+            </main>
+
         </div>
     );
 };
