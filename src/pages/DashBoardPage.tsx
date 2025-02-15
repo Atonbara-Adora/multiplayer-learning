@@ -1,4 +1,4 @@
-import { DashboardHeader, DashBoardRecentCards } from "../components/dashboard";
+import { DashboardHeader, DashBoardRecentCards, FriendsSidebar } from "../components/dashboard";
 
 const DashBoard = () => {
     return (
@@ -6,11 +6,9 @@ const DashBoard = () => {
             <header>
                 <DashboardHeader />
             </header>
-
             <main>
                 <DashBoardRecentCards />
             </main>
-
         </div>
     );
 };
