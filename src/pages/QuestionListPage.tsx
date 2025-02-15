@@ -15,8 +15,8 @@ function QuestionList() {
       </div>
 
       <div className="mt-3 space-y-3">
-        {questions.map((question) => (
-          <Question text={question.text} />
+        {questions.map((question, index) => (
+          <Question text={question.text} index={index} />
         ))}
       </div>
 
@@ -27,10 +27,11 @@ function QuestionList() {
   );
 }
 
-function Question({ text }: { text: string }) {
+function Question({ text, index }: { text: string, index: number }) {
+  const { setCurrentQuestionIndex } = useFlashCardStore();
   return (
     <div className="flex flex-col items-start py-2 rounded w-96">
-      <a className="btn btn-block mb-2" href="/multiple-choice">
+      <a className="btn btn-block mb-2" href={`/multiple-choice/${index + 1}`} onClick={() => setCurrentQuestionIndex(index)}>
         {text}
       </a>
     </div>

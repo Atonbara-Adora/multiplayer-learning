@@ -1,9 +1,13 @@
+import { useNavigate } from "react-router-dom";
+import EditDeckClassModal from "../components/modal/EditDeckClassModal";
 import { useFlashCardStore } from "../stores/FlashcardStore";
 import { useState } from "react";
 
 function MultipleChoice() {
-  const { classDeckName } = useFlashCardStore();
-  const [questions, setQuestions] = useState<string[]>([
+  const navigate = useNavigate();
+  const { classDeckName, updateQuestion, currentQuestionIndex } = useFlashCardStore();
+  const [question, setQuestion] = useState<string>("Question");
+  const [options, setOptions] = useState<string[]>([
     "Option 1",
     "Option 2",
     "Option 3",
@@ -11,10 +15,19 @@ function MultipleChoice() {
   ]);
 
   const handleOptionChange = (index: number, newOption: string) => {
-    const updatedQuestions = [...questions];
+    const updatedQuestions = [...options];
     updatedQuestions[index] = newOption;
-    setQuestions(updatedQuestions);
+    setOptions(updatedQuestions);
   };
+
+  const addToDeck = () => {
+    updateQuestion(currentQuestionIndex, {
+      text: question,
+      answers: options,
+      correctAnswer: options[0],
+    });
+    navigate("/question-list");
+  }
 
   return (
     <div className="flex flex-col justify-center items-center">
@@ -35,24 +48,34 @@ function MultipleChoice() {
         </ul>
       </div>
 
-      <h1 className="text-4xl font-bold text-center text-gray-800 underline decoration-purple-500 mb-4">{classDeckName}</h1>
+      <main className="flex flex-col items-center justify-center py-16">
+        <button
+          className="text-4xl font-bold text-center text-gray-800 underline decoration-purple-500 mb-4"
+          onClick={() => (document.getElementById("edit_deck_class_modal") as HTMLDialogElement).showModal()}
+        >
+          {classDeckName}
+        </button>
+        <input
+          type="text"
+          placeholder="Type here"
+          className="input input-bordered w-full max-w-xs"
+          value={question}
+          onChange={(e) => setQuestion(e.target.value)}
+        />
 
-      <input
-        type="text"
-        placeholder="Type here"
-        className="input input-bordered w-full max-w-xs"
-      />
+        <div className="mt-3 flex flex-wrap gap-4">
+          {options.map((option, index) => (
+            <MultipleChoiceOption
+              key={index}
+              option={option}
+              onChange={(newOption) => handleOptionChange(index, newOption)}
+            />
+          ))}
+        </div>
+        <button className="mt-6 btn btn-secondary" onClick={addToDeck}>Add to Deck</button>
+      </main>
 
-      <div className="mt-3 flex flex-wrap gap-4">
-        {questions.map((question, index) => (
-          <MultipleChoiceOption
-            key={index}
-            option={question}
-            onChange={(newOption) => handleOptionChange(index, newOption)}
-          />
-        ))}
-      </div>
-      <button className="mt-4 btn btn-secondary">Save</button>
+      <EditDeckClassModal />
     </div>
   );
 }

@@ -13,7 +13,7 @@ function App() {
         <Route path="/" element={<DashBoard />}></Route>
         <Route path="/flashcards" element={<MyDecksPage />}></Route>
         <Route path="/question-list" element={<QuestionListPage />}></Route>
-        <Route path="/multiple-choice" element={<MultipleChoicePage />}></Route>
+        <Route path="/multiple-choice/:id" element={<MultipleChoicePage />}></Route>
       </Routes>
     </BrowserRouter>
   )

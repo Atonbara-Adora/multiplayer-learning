@@ -13,11 +13,15 @@ export interface FlashCardStore {
     questions: CardType[];
     setDeckName: (deckName: string) => void;
     createQuestion: () => void;
+    currentQuestionIndex: number;
+    setCurrentQuestionIndex: (index: number) => void;
+    updateQuestion: (index: number, card: CardType) => void;
 }
 
 const flashCardSlice: StateCreator<FlashCardStore> = (set) => ({
     classDeckName: "",
     questions: [],
+    currentQuestionIndex: -1,
     setDeckName: (deckName: string) => set({ classDeckName: deckName }),
     createQuestion: () =>
         set((state) => ({
@@ -30,6 +34,13 @@ const flashCardSlice: StateCreator<FlashCardStore> = (set) => ({
                 },
             ],
         })),
+    setCurrentQuestionIndex: (index: number) => set({ currentQuestionIndex: index }),
+    updateQuestion: (index: number, card: CardType) => {
+        set((state) => {
+            state.questions[index] = card;
+            return state;
+        });
+    },
 });
 
 export const useFlashCardStore = create<FlashCardStore>()(
