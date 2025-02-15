@@ -17,6 +17,13 @@ const MyDecksPage = () => {
                     </div>
                 </div>
             </main>
+
+            <div className="flex justify-center items-center">
+                <a href="/question-list" className="btn">
+                    New Deck
+                </a>
+
+            </div>
         </div>
     );
 };
