@@ -1,7 +1,9 @@
+import DashBoard from "./pages/DashBoard"
+
 function App() {
 
   return (
-    <h1 className="underline font-black text-sm"> HELLo</h1>
+    <DashBoard />
   )
 }
 
