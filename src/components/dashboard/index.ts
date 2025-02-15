@@ -2,4 +2,6 @@ import DashBoardCard from "./DashBoardCard";
 import DashBoardRecentCards from "./DashBoardRecentCards";
 import DashboardHeader from "./DashBoardHeader";
 
-export { DashBoardCard, DashBoardRecentCards, DashboardHeader };
+import FriendsSidebar from "./FriendsSidebar";
+
+export { DashBoardCard, DashBoardRecentCards, DashboardHeader, FriendsSidebar };
