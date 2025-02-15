@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import DashBoard from "./pages/DashBoardPage";
+import MyDecksPage from "./pages/MyDecksPage";
 import MultipleChoice from "./pages/MultipleChoicePage";
 import QuestionList from "./pages/QuestionList";
 
@@ -10,6 +11,7 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<DashBoard />}></Route>
+        <Route path="/flashcards" element={<MyDecksPage />}></Route>
         <Route path="/question-list" element={<QuestionList deckName={"abc"} questions={[]} />}></Route>
         <Route path="/multiple-choice" element={<MultipleChoice />}></Route>
       </Routes>

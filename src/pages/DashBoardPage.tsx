@@ -1,4 +1,4 @@
-import { DashboardHeader, DashBoardRecentCards, FriendsSidebar } from "../components/dashboard";
+import { DashboardHeader, DashBoardRecentCards } from "../components/dashboard";
 
 const DashBoard = () => {
     return (
@@ -9,6 +9,13 @@ const DashBoard = () => {
             <main>
                 <DashBoardRecentCards />
             </main>
+
+            <div className="flex justify-center items-center">
+                <a href="/flashcards" className="btn">
+                    Flashcards
+                </a>
+
+            </div>
         </div>
     );
 };
