@@ -10,7 +10,12 @@ const DashBoard = () => {
                 <DashBoardRecentCards />
             </main>
 
-            <div className="flex justify-center items-center">
+            <div className="flex flex-col justify-center items-center space-y-2">
+
+                <a href="/new-game" className="btn">
+                    New Game
+                </a>
+
                 <a href="/flashcards" className="btn">
                     Flashcards
                 </a>

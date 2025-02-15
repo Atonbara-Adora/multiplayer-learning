@@ -1,17 +1,17 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
-import DashBoard from "./pages/DashBoardPage";
-import MyDecksPage from "./pages/MyDecksPage";
-import MultipleChoicePage from "./pages/MultipleChoicePage";
-import QuestionListPage from "./pages/QuestionListPage";
+import {
+  DashBoardPage, MyDecksPage, MultipleChoicePage, QuestionListPage, NewGamePage
+} from "./pages";
 
 function App() {
 
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<DashBoard />}></Route>
+        <Route path="/" element={<DashBoardPage />}></Route>
         <Route path="/flashcards" element={<MyDecksPage />}></Route>
+        <Route path="/new-game" element={<NewGamePage />}></Route>
         <Route path="/question-list" element={<QuestionListPage />}></Route>
         <Route path="/multiple-choice/:id" element={<MultipleChoicePage />}></Route>
       </Routes>
