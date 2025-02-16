@@ -82,6 +82,16 @@ function LiveMultipleChoiceDisplay() {
     }
   };
 
+  const getOptionStyles = (index: number) => {
+    const colors = {
+      0: 'bg-red-200 hover:bg-red-300',
+      1: 'bg-blue-200 hover:bg-blue-300',
+      2: 'bg-green-200 hover:bg-green-300',
+      3: 'bg-yellow-200 hover:bg-yellow-300'
+    };
+    return colors[index as keyof typeof colors];
+  };
+
   return (
     <div className="flex flex-col justify-center items-center">
       {/* Connection Status */}
@@ -109,10 +119,9 @@ function LiveMultipleChoiceDisplay() {
             {question.options.map((option, index) => (
               <div
                 key={index}
-                className={`bg-${['red', 'blue', 'green', 'yellow'][index]}-200 
+                className={`${getOptionStyles(index)} 
                            flex items-center justify-center cursor-pointer 
-                           hover:bg-${['red', 'blue', 'green', 'yellow'][index]}-300 
-                           transition-colors`}
+                           transition-colors text-2xl font-bold`}
                 role="button"
                 tabIndex={0}
                 onClick={() => handleClick(option)}
