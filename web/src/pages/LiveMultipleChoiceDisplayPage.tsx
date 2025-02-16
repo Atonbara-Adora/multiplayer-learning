@@ -6,6 +6,7 @@ interface Question {
   question: string;
   options: string[];
   correctAnswer: string;
+  answered?: boolean;
 }
 
 function LiveMultipleChoiceDisplay() {
@@ -68,6 +69,8 @@ function LiveMultipleChoiceDisplay() {
         gamePin: parseInt(gamePin), 
         answer: option 
       });
+      // Disable clicking after answer is submitted
+      setQuestion(prev => prev ? { ...prev, answered: true } : null);
     }
   };
 
@@ -125,12 +128,13 @@ function LiveMultipleChoiceDisplay() {
               <div
                 key={index}
                 className={`${getOptionStyles(index)} 
-                           flex items-center justify-center cursor-pointer 
+                           flex items-center justify-center
+                           ${question.answered ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'} 
                            transition-colors text-2xl font-bold`}
                 role="button"
                 tabIndex={0}
-                onClick={() => handleClick(option)}
-                onKeyDown={(e) => e.key === "Enter" && handleClick(option)}
+                onClick={() => !question.answered && handleClick(option)}
+                onKeyDown={(e) => !question.answered && e.key === "Enter" && handleClick(option)}
               >
                 {option}
               </div>

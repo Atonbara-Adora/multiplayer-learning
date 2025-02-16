@@ -8,6 +8,12 @@ interface Player {
   score: number;
 }
 
+interface Question {
+  text: string;
+  answers: string[];
+  correctAnswer: string;
+}
+
 function NewGamePage() {
   const [socket, setSocket] = useState<Socket | null>(null);
   const [gamePin, setGamePin] = useState<number | null>(null);
@@ -17,6 +23,8 @@ function NewGamePage() {
   const [selectedDeck, setSelectedDeck] = useState('');
   const { deck } = useDeckStore();
   const navigate = useNavigate();
+  const [currentDeckQuestions, setCurrentDeckQuestions] = useState<Question[]>([]);
+  const [usedQuestions, setUsedQuestions] = useState<Set<number>>(new Set());
 
   useEffect(() => {
     const newSocket = io('http://localhost:4000', {
@@ -45,6 +53,10 @@ function NewGamePage() {
       setPlayers(updatedPlayers);
     });
 
+    newSocket.on('send-next-question', () => {
+      sendQuestion();
+    });
+
     setSocket(newSocket);
 
     return () => {
@@ -65,17 +77,40 @@ function NewGamePage() {
     }
   };
 
-  const sendTestQuestion = () => {
-    if (socket && gamePin) {
-      const deckQuestions = deck.find((d) => d.classDeckName === selectedDeck);
-      const randomQuestion = deckQuestions?.questions[Math.floor(Math.random() * deckQuestions.questions.length)];
-      const testQuestion = {
-        question: randomQuestion?.text,
-        options: randomQuestion?.answers,
-        correctAnswer: randomQuestion?.correctAnswer,
-      };
-      socket.emit('send-question', { gamePin, question: testQuestion });
+  const getRandomQuestion = () => {
+    const deckQuestions = deck.find((d) => d.classDeckName === selectedDeck)?.questions;
+    if (!deckQuestions || deckQuestions.length === 0) return null;
+
+    const availableQuestions = deckQuestions.filter((_, index) => !usedQuestions.has(index));
+    
+    if (availableQuestions.length === 0) {
+      setUsedQuestions(new Set());
+      return deckQuestions[Math.floor(Math.random() * deckQuestions.length)];
     }
+
+    const randomIndex = Math.floor(Math.random() * availableQuestions.length);
+    const originalIndex = deckQuestions.indexOf(availableQuestions[randomIndex]);
+    setUsedQuestions(prev => new Set(prev).add(originalIndex));
+    
+    return availableQuestions[randomIndex];
+  };
+
+  const sendQuestion = () => {
+    if (socket && gamePin) {
+      const randomQuestion = getRandomQuestion();
+      if (randomQuestion) {
+        const question = {
+          question: randomQuestion.text,
+          options: randomQuestion.answers,
+          correctAnswer: randomQuestion.correctAnswer,
+        };
+        socket.emit('send-question', { gamePin, question });
+      }
+    }
+  };
+
+  const sendTestQuestion = () => {
+    sendQuestion();
   };
 
   return (

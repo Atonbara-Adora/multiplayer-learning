@@ -120,6 +120,14 @@ io.on('connection', (socket) => {
     
     // Send score update to all players
     io.to(gamePin.toString()).emit('player-joined', game.players);
+
+    // After a brief delay, send the next question
+    setTimeout(() => {
+        if (game.host) {
+            // Emit event to host to send next question
+            io.to(game.host).emit('send-next-question');
+        }
+    }, 2000); // Wait for 2 seconds after answer
   });
 
   // Handle disconnection
@@ -171,4 +179,12 @@ app.get('/test', (req, res) => {
 const PORT = process.env.PORT || 4000;
 server.listen(PORT, '0.0.0.0', () => {
   console.log(`Server running on port ${PORT}`);
-}); 
+});
+
+// Add this function to get a random question from the deck
+function getRandomQuestion(deck) {
+  if (!deck || !deck.questions || deck.questions.length === 0) {
+    return null;
+  }
+  return deck.questions[Math.floor(Math.random() * deck.questions.length)];
+} 
