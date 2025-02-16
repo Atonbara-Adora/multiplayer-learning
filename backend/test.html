@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Game Server Test</title>
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+    <style>
+        .container { margin: 20px; }
+        .player { margin: 10px 0; padding: 5px; background: #f0f0f0; }
+        .question-container {
+            background: #f8f9fa;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        .options {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .options button {
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            background: #007bff;
+            color: white;
+            cursor: pointer;
+        }
+        .options button:hover {
+            background: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Host Controls</h2>
+        <button onclick="createGame()">Create New Game</button>
+        <button onclick="startGame()">Start Game</button>
+        <button onclick="sendQuestion()">Send Test Question</button>
+        <div id="gamePin"></div>
+        
+        <h2>Player Controls</h2>
+        <input type="text" id="playerName" placeholder="Enter player name">
+        <input type="number" id="joinPin" placeholder="Enter game PIN">
+        <button onclick="joinGame()">Join Game</button>
+        
+        <h2>Game Status</h2>
+        <div id="players"></div>
+        <div id="status"></div>
+    </div>
+
+    <script>
+        const socket = io('http://localhost:4000', {
+            reconnection: true,
+            reconnectionAttempts: 5,
+            reconnectionDelay: 1000,
+            transports: ['websocket', 'polling'],
+            timeout: 10000
+        });
+
+        let currentGamePin = null;
+
+        // Connection status
+        socket.on('connect', () => {
+            updateStatus('Connected to server');
+        });
+
+        socket.on('disconnect', () => {
+            updateStatus('Disconnected from server');
+        });
+
+        socket.on('connect_error', (error) => {
+            console.error('Connection error:', error);
+            updateStatus('Connection error: ' + error.message);
+        });
+
+        socket.on('connect_timeout', () => {
+            console.error('Connection timeout');
+            updateStatus('Connection timeout');
+        });
+
+        // Host events
+        function createGame() {
+            console.log('Attempting to create game...');
+            updateStatus('Attempting to create game...');
+            socket.emit('create-game');
+        }
+
+        socket.on('game-created', (gamePin) => {
+            console.log('Received game-created event with PIN:', gamePin);
+            currentGamePin = gamePin;
+            document.getElementById('gamePin').innerHTML = `Game PIN: ${gamePin}`;
+            updateStatus(`Game created with PIN: ${gamePin}`);
+        });
+
+        function startGame() {
+            if (!currentGamePin) {
+                updateStatus('No game created yet');
+                return;
+            }
+            socket.emit('start-game', { gamePin: currentGamePin });
+        }
+
+        function sendQuestion() {
+            if (!currentGamePin) {
+                updateStatus('No game created yet');
+                return;
+            }
+            const testQuestion = {
+                question: "What is 2+2?",
+                options: ["3", "4", "5", "6"],
+                correctAnswer: "4"
+            };
+            socket.emit('send-question', { gamePin: currentGamePin, question: testQuestion });
+        }
+
+        // Player events
+        function joinGame() {
+            const playerName = document.getElementById('playerName').value;
+            const gamePin = parseInt(document.getElementById('joinPin').value);
+            if (!playerName || !gamePin) {
+                updateStatus('Please enter player name and game PIN');
+                return;
+            }
+            socket.emit('join-game', { gamePin, playerName });
+        }
+
+        // Game events
+        socket.on('game-started', () => {
+            updateStatus('Game has started!');
+        });
+
+        socket.on('player-joined', (players) => {
+            updatePlayers(players);
+            updateStatus('Player list updated');
+        });
+
+        socket.on('new-question', (question) => {
+            console.log('New question received:', question);
+            updateStatus('New question received: ' + question.question);
+            
+            // Display the question and answer options
+            const questionHtml = `
+                <div class="question-container">
+                    <h3>${question.question}</h3>
+                    <div class="options">
+                        ${question.options.map((option, index) => `
+                            <button onclick="submitAnswer('${option}')">${option}</button>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+            document.getElementById('status').insertAdjacentHTML('afterbegin', questionHtml);
+        });
+
+        socket.on('player-answered', (data) => {
+            const resultMessage = data.wasCorrect ? 
+                `${data.playerName} answered correctly! New score: ${data.score}` :
+                `${data.playerName} answered incorrectly. Score: ${data.score}`;
+            updateStatus(resultMessage);
+        });
+
+        socket.on('error', (message) => {
+            updateStatus('Error: ' + message);
+        });
+
+        // Helper functions
+        function updateStatus(message) {
+            const status = document.getElementById('status');
+            status.innerHTML = `${new Date().toLocaleTimeString()}: ${message}<br>${status.innerHTML}`;
+        }
+
+        function updatePlayers(players) {
+            const playersDiv = document.getElementById('players');
+            playersDiv.innerHTML = '<h3>Connected Players:</h3>' + 
+                players.map(p => `<div class="player">${p.name} (Score: ${p.score})</div>`).join('');
+        }
+
+        // Keep only the correct submitAnswer function at the bottom that handles the clicked answer
+        function submitAnswer(answer) {
+            const gamePin = parseInt(document.getElementById('joinPin').value);
+            if (!gamePin) {
+                updateStatus('Please enter game PIN');
+                return;
+            }
+            console.log('Submitting answer:', answer);
+            updateStatus('Submitting answer: ' + answer);
+            socket.emit('submit-answer', { gamePin, answer });
+        }
+    </script>
+</body>
+</html> 

@@ -1,63 +1,135 @@
-import { useState } from "react";
-import { useDeckStore } from "../stores/DeckStore";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from 'react';
+import io, { Socket } from 'socket.io-client';
 
-const NewGamePage = () => {
-    const { deck } = useDeckStore();
-    const navigate = useNavigate();
+interface Player {
+  name: string;
+  score: number;
+}
 
-    const [selectedDeck, setSelectedDeck] = useState('');
+function NewGamePage() {
+  const [socket, setSocket] = useState<Socket | null>(null);
+  const [gamePin, setGamePin] = useState<number | null>(null);
+  const [players, setPlayers] = useState<Player[]>([]);
+  const [gameStarted, setGameStarted] = useState(false);
+  const [isConnected, setIsConnected] = useState(false);
 
-    const startGame = () => {
-        console.log('Start Game');
-        navigate('/gametime');
+  useEffect(() => {
+    const newSocket = io('http://localhost:4000', {
+      reconnection: true,
+      reconnectionAttempts: 5,
+      reconnectionDelay: 1000,
+    });
+
+    newSocket.on('connect', () => {
+      console.log('Connected to server');
+      setIsConnected(true);
+    });
+
+    newSocket.on('disconnect', () => {
+      console.log('Disconnected from server');
+      setIsConnected(false);
+    });
+
+    newSocket.on('game-created', (pin: number) => {
+      console.log('Game created with PIN:', pin);
+      setGamePin(pin);
+    });
+
+    newSocket.on('player-joined', (updatedPlayers: Player[]) => {
+      console.log('Players updated:', updatedPlayers);
+      setPlayers(updatedPlayers);
+    });
+
+    setSocket(newSocket);
+
+    return () => {
+      newSocket.disconnect();
+    };
+  }, []);
+
+  const createGame = () => {
+    if (socket) {
+      socket.emit('create-game');
     }
+  };
 
-    return (
-        <div className="flex flex-col justify-center items-center p-8">
-            <h1 className="text-3xl">New Game</h1>
+  const startGame = () => {
+    if (socket && gamePin) {
+      socket.emit('start-game', { gamePin });
+      setGameStarted(true);
+    }
+  };
 
-            <div className="dropdown">
-                <div tabIndex={0} role="button" className="btn m-1">
-                    {selectedDeck === '' ? 'Select Deck' : selectedDeck}
-                    <svg className="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 9-7 7-7-7" />
-                    </svg>
+  const sendTestQuestion = () => {
+    if (socket && gamePin) {
+      const testQuestion = {
+        question: "What is 2+2?",
+        options: ["3", "4", "5", "6"],
+        correctAnswer: "4"
+      };
+      socket.emit('send-question', { gamePin, question: testQuestion });
+    }
+  };
 
-                </div>
-                <ul tabIndex={0} className="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
-                    {deck.map((deck, index) => (
-                        <li key={index} onClick={() => setSelectedDeck(deck.classDeckName)}><a>{deck.classDeckName}</a></li>
-                    ))
-                    }
-                </ul>
-            </div>
+  return (
+    <div className="p-8">
+      {/* Connection Status */}
+      <div className={`text-sm mb-4 ${isConnected ? 'text-green-500' : 'text-red-500'}`}>
+        {isConnected ? 'Connected to server' : 'Disconnected'}
+      </div>
 
+      {/* Game Creation */}
+      {!gamePin ? (
+        <button
+          onClick={createGame}
+          className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+        >
+          Create New Game
+        </button>
+      ) : (
+        <div className="space-y-4">
+          {/* Game PIN Display */}
+          <div className="text-4xl font-bold p-4 bg-gray-100 rounded">
+            Game PIN: {gamePin}
+          </div>
 
-            <div className="flex overflow-x-auto space-x-4 mt-4">
-                {['Silvana', 'Atonbara', 'Yongye'].map((player, index) => (
-                    <PlayerGrid key={index} name={player} />
-                ))}
-                <div className="flex flex-col items-center">
-                    <div className="flex-shrink-0 bg-gray-200 rounded-xl w-36 h-36 flex items-center justify-center">
-                        <span className="text-black text-8xl">+</span>
-                    </div>
-                    <span className="text-black mt-2">Add Player</span>
-                </div>
-            </div>
+          {/* Player List */}
+          <div className="bg-white p-4 rounded shadow">
+            <h2 className="text-xl font-bold mb-2">Players ({players.length})</h2>
+            {players.map((player, index) => (
+              <div key={index} className="py-1">
+                {player.name} - Score: {player.score}
+              </div>
+            ))}
+          </div>
 
-            <button className="btn btn-primary mt-4" onClick={startGame}>Start Game</button>
+          {/* Game Controls */}
+          <div className="space-x-4">
+            <button
+              onClick={startGame}
+              disabled={gameStarted || players.length === 0}
+              className={`px-4 py-2 rounded ${
+                gameStarted || players.length === 0
+                  ? 'bg-gray-400 cursor-not-allowed'
+                  : 'bg-green-500 hover:bg-green-600 text-white'
+              }`}
+            >
+              Start Game
+            </button>
+
+            {gameStarted && (
+              <button
+                onClick={sendTestQuestion}
+                className="bg-purple-500 text-white px-4 py-2 rounded hover:bg-purple-600"
+              >
+                Send Test Question
+              </button>
+            )}
+          </div>
         </div>
-    );
-};
-
-const PlayerGrid = ({ name }: { name: string }) => {
-    return (
-        <div className="flex flex-col items-center">
-            <div className="flex-shrink-0 p-4 bg-gray-200 rounded-2xl w-36 h-36 flex items-center justify-center"></div>
-            <span className="text-black mt-2">{name}</span>
-        </div>
-    );
-};
+      )}
+    </div>
+  );
+}
 
 export default NewGamePage;
