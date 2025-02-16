@@ -13,6 +13,7 @@ export interface FlashCardStore {
     questions: CardType[];
     setDeckName: (deckName: string) => void;
     createQuestion: () => void;
+    addQuestionWithContent: (card: CardType) => void;
     currentQuestionIndex: number;
     setCurrentQuestionIndex: (index: number) => void;
     updateQuestion: (index: number, card: CardType) => void;
@@ -35,6 +36,7 @@ const flashCardSlice: StateCreator<FlashCardStore> = (set) => ({
                 },
             ],
         })),
+    addQuestionWithContent: (card: CardType) => set((state) => ({ questions: [...state.questions, card] })),
     setCurrentQuestionIndex: (index: number) => set({ currentQuestionIndex: index }),
     updateQuestion: (index: number, card: CardType) => {
         set((state) => {

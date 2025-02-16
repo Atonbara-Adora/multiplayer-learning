@@ -3,10 +3,11 @@ import { useNavigate } from "react-router-dom";
 import PlusIcon from "../buttons/PlusIcon";
 import EditDeckClassModal from "../components/modal/EditDeckClassModal";
 import { useDeckStore } from "../stores/DeckStore";
+import { mockDeck } from "../data/mockDeck";
 
 function QuestionList() {
   const navigate = useNavigate();
-  const { classDeckName, questions, createQuestion } = useFlashCardStore();
+  const { classDeckName, questions, createQuestion, addQuestionWithContent } = useFlashCardStore();
   const { addDeck } = useDeckStore();
 
   const navigateBack = () => {
@@ -39,6 +40,20 @@ function QuestionList() {
             {classDeckName.length === 0 ? "Deck Name" : classDeckName}
           </button>
         </div>
+
+        <button
+          onClick={() => {
+            const randomQuestion = mockDeck[Math.floor(Math.random() * mockDeck.length)];
+            addQuestionWithContent({
+              text: randomQuestion.question,
+              answers: randomQuestion.options,
+              correctAnswer: randomQuestion.answer
+            });
+          }}
+          className="absolute right-34 bg-green-600 text-white px-4 py-2 rounded hover:bg-green-500"
+        >
+          Add Random
+        </button>
 
         <button
           onClick={handleSave}
