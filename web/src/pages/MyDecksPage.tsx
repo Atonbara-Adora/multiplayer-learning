@@ -1,4 +1,3 @@
-import { MyDeckCard } from "../components/myDecks";
 import { useDeckStore } from "../stores/DeckStore";
 import { useFlashCardStore } from "../stores/FlashcardStore";
 import { useNavigate } from "react-router-dom";

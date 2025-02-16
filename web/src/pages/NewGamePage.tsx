@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import io, { Socket } from 'socket.io-client';
+import { useDeckStore } from '../stores/DeckStore';
 
 interface Player {
   name: string;
@@ -12,6 +13,8 @@ function NewGamePage() {
   const [players, setPlayers] = useState<Player[]>([]);
   const [gameStarted, setGameStarted] = useState(false);
   const [isConnected, setIsConnected] = useState(false);
+  const [selectedDeck, setSelectedDeck] = useState('');
+  const { deck } = useDeckStore();
 
   useEffect(() => {
     const newSocket = io('http://localhost:4000', {
@@ -72,17 +75,54 @@ function NewGamePage() {
   };
 
   return (
-    <div className="p-8">
+    <div className="flex flex-col items-center justify-center p-8">
       {/* Connection Status */}
-      <div className={`text-sm mb-4 ${isConnected ? 'text-green-500' : 'text-red-500'}`}>
-        {isConnected ? 'Connected to server' : 'Disconnected'}
+      <div className='flex flex-row'>
+        <button
+          onClick={() => { }}
+          className="absolute left-10 top-4 text-2xl text-black hover:text-gray-300"
+        >
+          ←
+        </button>
+        <div className={`text-sm mb-4 ${isConnected ? 'text-green-500' : 'text-red-500'}`}>
+          {isConnected ? 'Connected to server' : 'Disconnected'}
+        </div>
+      </div>
+
+      <div className="dropdown">
+        <div tabIndex={0} role="button" className="btn m-1">
+          {selectedDeck === '' ? 'Select Deck' : selectedDeck}
+          <svg className="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 9-7 7-7-7" />
+          </svg>
+
+        </div>
+        <ul tabIndex={0} className="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
+          {deck.map((deck, index) => (
+            <li key={index} onClick={() => setSelectedDeck(deck.classDeckName)}><a>{deck.classDeckName}</a></li>
+          ))
+          }
+        </ul>
+      </div>
+
+
+      <div className="flex overflow-x-auto space-x-4 mt-4">
+        {['Silvana', 'Atonbara', 'Yongye'].map((player, index) => (
+          <PlayerGrid key={index} name={player} />
+        ))}
+        <div className="flex flex-col items-center">
+          <div className="flex-shrink-0 bg-gray-200 rounded-xl w-36 h-36 flex items-center justify-center">
+            <span className="text-black text-8xl">+</span>
+          </div>
+          <span className="text-black mt-2">Add Player</span>
+        </div>
       </div>
 
       {/* Game Creation */}
       {!gamePin ? (
         <button
           onClick={createGame}
-          className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+          className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 mt-2"
         >
           Create New Game
         </button>
@@ -108,11 +148,10 @@ function NewGamePage() {
             <button
               onClick={startGame}
               disabled={gameStarted || players.length === 0}
-              className={`px-4 py-2 rounded ${
-                gameStarted || players.length === 0
-                  ? 'bg-gray-400 cursor-not-allowed'
-                  : 'bg-green-500 hover:bg-green-600 text-white'
-              }`}
+              className={`px-4 py-2 rounded ${gameStarted || players.length === 0
+                ? 'bg-gray-400 cursor-not-allowed'
+                : 'bg-green-500 hover:bg-green-600 text-white'
+                }`}
             >
               Start Game
             </button>
@@ -131,5 +170,14 @@ function NewGamePage() {
     </div>
   );
 }
+
+const PlayerGrid = ({ name }: { name: string }) => {
+  return (
+    <div className="flex flex-col items-center">
+      <div className="flex-shrink-0 p-4 bg-gray-200 rounded-2xl w-36 h-36 flex items-center justify-center"></div>
+      <span className="text-black mt-2">{name}</span>
+    </div>
+  );
+};
 
 export default NewGamePage;
