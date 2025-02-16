@@ -1,9 +1,9 @@
 const DashboardHeader = () => {
     return (
-        <div className="navbar bg-base-100">
+        <div className="navbar bg-violet-950">
             <div className="navbar-start"></div>
             <div className="navbar-center">
-                <a className="btn btn-ghost text-xl">Welcome, Kene</a>
+                <a className="btn text-white btn-ghost text-xl">Welcome, Kene</a>
             </div>
             <div className="navbar-end">
                 <button className="btn btn-ghost btn-circle">

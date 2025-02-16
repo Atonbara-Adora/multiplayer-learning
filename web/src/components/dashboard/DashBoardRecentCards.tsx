@@ -3,7 +3,7 @@ import DashBoardCard from "./DashBoardCard";
 const DashBoardRecentCards = () => {
     return (
         <div className="px-8 py-8">
-            <h2 className="text-xl font-bold">Recent Flashcards</h2>
+            <h2 className="text-white text-xl font-bold">Recent Flashcards</h2>
 
             {/* a horizontal scrollview to select the cards */}
             <div className="overflow-x-auto">
