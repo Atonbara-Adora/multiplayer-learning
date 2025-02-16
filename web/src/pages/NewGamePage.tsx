@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import io, { Socket } from 'socket.io-client';
 import { useDeckStore } from '../stores/DeckStore';
+import { useNavigate } from 'react-router-dom';
 
 interface Player {
   name: string;
@@ -15,6 +16,7 @@ function NewGamePage() {
   const [isConnected, setIsConnected] = useState(false);
   const [selectedDeck, setSelectedDeck] = useState('');
   const { deck } = useDeckStore();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const newSocket = io('http://localhost:4000', {
@@ -65,10 +67,12 @@ function NewGamePage() {
 
   const sendTestQuestion = () => {
     if (socket && gamePin) {
+      const deckQuestions = deck.find((d) => d.classDeckName === selectedDeck);
+      const randomQuestion = deckQuestions?.questions[Math.floor(Math.random() * deckQuestions.questions.length)];
       const testQuestion = {
-        question: "What is 2+2?",
-        options: ["3", "4", "5", "6"],
-        correctAnswer: "4"
+        question: randomQuestion?.text,
+        options: randomQuestion?.answers,
+        correctAnswer: randomQuestion?.correctAnswer,
       };
       socket.emit('send-question', { gamePin, question: testQuestion });
     }
@@ -79,7 +83,7 @@ function NewGamePage() {
       {/* Connection Status */}
       <div className='flex flex-row'>
         <button
-          onClick={() => { }}
+          onClick={() => navigate('/')}
           className="absolute left-10 top-4 text-2xl text-black hover:text-gray-300"
         >
           ←
