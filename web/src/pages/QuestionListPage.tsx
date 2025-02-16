@@ -19,22 +19,20 @@ function QuestionList() {
 
   return (
     <div className="flex flex-col justify-normal items-center py-10 bg-violet-900 min-h-screen w-full">
-      <div className="w-full max-w-4xl flex items-center justify-between">
+      <div className="w-full max-w-4xl relative flex items-center">
         <button
           onClick={navigateBack}
-          className="text-2xl text-white hover:text-gray-300 justify-self-start"
+          className="absolute left-0 text-2xl text-white hover:text-gray-300"
         >
           ←
         </button>
 
-        <div className="flex flex-col items-center">
+        <div className="w-full flex justify-center">
           <button
-            className="text-4xl font-bold text-white"
+            className="text-4xl font-bold text-white underline"
             onClick={() =>
               (
-                document.getElementById(
-                  "edit_deck_class_modal"
-                ) as HTMLDialogElement
+                document.getElementById("edit_deck_class_modal") as HTMLDialogElement
               )?.showModal()
             }
           >
@@ -44,7 +42,7 @@ function QuestionList() {
 
         <button
           onClick={handleSave}
-          className="bg-pink-600 text-white px-4 py-2 rounded hover:bg-pink-600"
+          className="absolute right-0 bg-pink-600 text-white px-4 py-2 rounded hover:bg-pink-600"
         >
           Add to Deck
         </button>
