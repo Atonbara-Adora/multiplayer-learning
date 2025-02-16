@@ -8,12 +8,6 @@ interface Player {
   score: number;
 }
 
-interface Question {
-  text: string;
-  answers: string[];
-  correctAnswer: string;
-}
-
 function NewGamePage() {
   const [socket, setSocket] = useState<Socket | null>(null);
   const [gamePin, setGamePin] = useState<number | null>(null);
@@ -23,8 +17,13 @@ function NewGamePage() {
   const [selectedDeck, setSelectedDeck] = useState('');
   const { deck } = useDeckStore();
   const navigate = useNavigate();
-  const [currentDeckQuestions, setCurrentDeckQuestions] = useState<Question[]>([]);
   const [usedQuestions, setUsedQuestions] = useState<Set<number>>(new Set());
+
+  const playerInfo = [
+    { name: 'Silvana', profile: "/silvana.png" },
+    { name: 'Atonbara', profile: "/atonbara.png" },
+    { name: 'Yongye', profile: "/yongye.png" },
+  ]
 
   useEffect(() => {
     const newSocket = io('http://localhost:4000', {
@@ -82,7 +81,7 @@ function NewGamePage() {
     if (!deckQuestions || deckQuestions.length === 0) return null;
 
     const availableQuestions = deckQuestions.filter((_, index) => !usedQuestions.has(index));
-    
+
     if (availableQuestions.length === 0) {
       setUsedQuestions(new Set());
       return deckQuestions[Math.floor(Math.random() * deckQuestions.length)];
@@ -91,7 +90,7 @@ function NewGamePage() {
     const randomIndex = Math.floor(Math.random() * availableQuestions.length);
     const originalIndex = deckQuestions.indexOf(availableQuestions[randomIndex]);
     setUsedQuestions(prev => new Set(prev).add(originalIndex));
-    
+
     return availableQuestions[randomIndex];
   };
 
@@ -146,8 +145,8 @@ function NewGamePage() {
 
 
       <div className="flex overflow-x-auto space-x-4 mt-4">
-        {['Silvana', 'Atonbara', 'Yongye'].map((player, index) => (
-          <PlayerGrid key={index} name={player} />
+        {playerInfo.map((player, index) => (
+          <PlayerGrid key={index} name={player.name} profile={player.profile} />
         ))}
         <div className="flex flex-col items-center">
           <div className="flex-shrink-0 bg-gray-200 rounded-xl w-36 h-36 flex items-center justify-center">
@@ -210,10 +209,12 @@ function NewGamePage() {
   );
 }
 
-const PlayerGrid = ({ name }: { name: string }) => {
+const PlayerGrid = ({ name, profile }: { name: string, profile: string }) => {
   return (
     <div className="flex flex-col items-center">
-      <div className="flex-shrink-0 p-4 bg-gray-200 rounded-2xl w-36 h-36 flex items-center justify-center"></div>
+      <div className="flex-shrink-0 p-4 bg-gray-200 rounded-2xl w-36 h-36 flex items-center justify-center">
+        <img src={profile} className="object-cover"></img>
+      </div>
       <span className="text-black mt-2">{name}</span>
     </div>
   );
