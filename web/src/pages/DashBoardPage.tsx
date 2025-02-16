@@ -19,6 +19,13 @@ const DashBoard = () => {
         </a>
 
         <a
+          href="/game/join"
+          className="btn w-12border-0 border-none px-6 py-3 text-white rounded-lg bg-gradient-to-r from-pink-500 to-violet-500 hover:from-pink-600 hover:to-violet-600 w-4/12"
+        >
+          Join Game
+        </a>
+
+        <a
           href="/flashcards"
           className="btn border-0 border-none px-6 py-3 text-white rounded-lg bg-gradient-to-r from-pink-500 to-violet-500 hover:from-pink-600 hover:to-violet-600 w-4/12"
         >
