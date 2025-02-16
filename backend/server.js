@@ -112,14 +112,13 @@ io.on('connection', (socket) => {
     player.score += score;
     console.log('Updated player score:', player.score);
     
-    // Send both the answer result and updated player list
-    io.to(gamePin.toString()).emit('player-answered', {
-        playerName: player.name,
-        score: player.score,
-        wasCorrect: score > 0
+    // Send result only to the player who answered
+    socket.emit('answer-result', {
+        wasCorrect: score > 0,
+        score: player.score
     });
     
-    // Add this line to update the leaderboard
+    // Send score update to all players
     io.to(gamePin.toString()).emit('player-joined', game.players);
   });
 

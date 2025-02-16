@@ -48,8 +48,8 @@ function LiveMultipleChoiceDisplay() {
       setPlayers(updatedPlayers);
     });
 
-    newSocket.on('player-answered', (data) => {
-      console.log('Player answered:', data);
+    newSocket.on('answer-result', (data) => {
+      console.log('Answer result:', data);
       const message = data.wasCorrect ? 'Correct!' : 'Incorrect!';
       showModal(message);
     });
@@ -79,6 +79,11 @@ function LiveMultipleChoiceDisplay() {
         titleElement.textContent = message;
       }
       modal.showModal();
+      
+      // Automatically close the modal after 2 seconds
+      setTimeout(() => {
+        modal.close();
+      }, 2000);
     }
   };
 
@@ -136,8 +141,7 @@ function LiveMultipleChoiceDisplay() {
 
       <dialog id="modal2" className="modal">
         <div className="modal-box">
-          <h3 className="font-bold text-lg">Waiting...</h3>
-          <p className="py-4">Click anywhere to close.</p>
+          <h3 className="font-bold text-lg text-center">Waiting...</h3>
         </div>
         <form method="dialog" className="modal-backdrop">
           <button>close</button>
