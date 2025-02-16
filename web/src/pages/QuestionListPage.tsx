@@ -16,6 +16,7 @@ function QuestionList() {
 
   const handleSave = () => {
     addDeck({ classDeckName, questions });
+    navigateBack();
   };
 
   return (
@@ -57,7 +58,7 @@ function QuestionList() {
 
         <button
           onClick={handleSave}
-          className="absolute right-0 bg-pink-600 text-white px-4 py-2 rounded hover:bg-pink-600"
+          className="absolute right-0 bg-pink-600 text-white px-4 py-2 rounded hover:bg-pink-400"
         >
           Add to Deck
         </button>
